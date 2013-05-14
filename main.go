@@ -1,23 +1,24 @@
 package main
 
 import (
-	"fmt"
 	"flag"
+	"fmt"
 	"html/template"
-	"net/http"
 	"io"
+	"net/http"
+	"os"
 
 	"code.google.com/p/goauth2/oauth"
 )
 
 var (
-	clientId = flag.String("id", "", "Client ID")
+	clientId     = flag.String("id", "", "Client ID")
 	clientSecret = flag.String("secret", "", "Client Secret")
-	apiURL = flag.String("api", "https://www.google.com/m8/feeds", "API URL")
-	requestURL = flag.String("request", "https://www.google.com/m8/feeds/contacts/default/full/?max-results=10000&alt=json", "API request")
-	code = flag.String("code", "", "Authorization Code")
-	cachefile = flag.String("cache", "cache.json", "Token cache file")
-	port = flag.Int("port", 8080, "Webserver port")
+	apiURL       = flag.String("api", "https://www.google.com/m8/feeds", "API URL")
+	requestURL   = flag.String("request", "https://www.google.com/m8/feeds/contacts/default/full/?max-results=10000&alt=json", "API request")
+	code         = flag.String("code", "", "Authorization Code")
+	cachefile    = flag.String("cache", "cache.json", "Token cache file")
+	port         = flag.Int("port", 8080, "Webserver port")
 )
 
 var config *oauth.Config
@@ -28,19 +29,19 @@ func main() {
 
 	// Set up a configuration.
 	config = &oauth.Config{
-		ClientId: *clientId,
+		ClientId:     *clientId,
 		ClientSecret: *clientSecret,
-		Scope: *apiURL,
-		AuthURL: "https://accounts.google.com/o/oauth2/auth",
-		TokenURL: "https://accounts.google.com/o/oauth2/token",
-		TokenCache: oauth.CacheFile(*cachefile),
-		RedirectURL: "http://localhost:8080/oauth2callback",
+		Scope:        *apiURL,
+		AuthURL:      "https://accounts.google.com/o/oauth2/auth",
+		TokenURL:     "https://accounts.google.com/o/oauth2/token",
+		TokenCache:   oauth.CacheFile(*cachefile),
+		RedirectURL:  "http://localhost:8080/oauth2callback",
 	}
 
 	http.HandleFunc("/", handleRoot)
 	http.HandleFunc("/auth", handleAuth)
 	http.HandleFunc("/oauth2callback", handleOAuth2Callback)
-	http.ListenAndServe(fmt.Sprintf(":%d", *port), nil)
+	http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 }
 
 func handleRoot(w http.ResponseWriter, r *http.Request) {
