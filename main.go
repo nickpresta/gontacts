@@ -34,7 +34,7 @@ func main() {
 		AuthURL:      "https://accounts.google.com/o/oauth2/auth",
 		TokenURL:     "https://accounts.google.com/o/oauth2/token",
 		TokenCache:   oauth.CacheFile(*cachefile),
-		RedirectURL:  "http://localhost:8080/oauth2callback",
+		RedirectURL:  "http://gontacts.herokuapp.com/oauth2callback",
 	}
 
 	http.HandleFunc("/", handleRoot)
